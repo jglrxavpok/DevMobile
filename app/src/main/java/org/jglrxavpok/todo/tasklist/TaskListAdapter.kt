@@ -18,14 +18,10 @@ class TaskListAdapter(taskList: List<Task>): ListAdapter<Task, TaskListAdapter.H
     }
 
     inner class Holder(itemView: View): RecyclerView.ViewHolder(itemView) {
-        fun bind(taskTitle: Task) {
+        fun bind(task: Task) {
             itemView.apply {
                 val binding = DataBindingUtil.bind<ItemTaskBinding>(this)!!
-                val textView = binding.taskTitle
-                textView.text = taskTitle.title
-
-                val descriptionView = binding.taskDescription
-                descriptionView.text = taskTitle.description
+                binding.task = task
             }
         }
     }
