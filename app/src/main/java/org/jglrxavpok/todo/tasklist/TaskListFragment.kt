@@ -4,11 +4,13 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import org.jglrxavpok.todo.R
+import org.jglrxavpok.todo.databinding.FragmentTaskListBinding
 import java.util.*
 
 class TaskListFragment: Fragment() {
@@ -21,12 +23,13 @@ class TaskListFragment: Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        val recyclerView = view.findViewById<RecyclerView>(R.id.recycler_view)
+        val binding = DataBindingUtil.bind<FragmentTaskListBinding>(view)!!
+        val recyclerView = binding.recyclerView
         recyclerView.layoutManager = LinearLayoutManager(activity)
         val adapter = TaskListAdapter(taskList)
         recyclerView.adapter = adapter
 
-        view.findViewById<FloatingActionButton>(R.id.add_task_button).setOnClickListener {
+        binding.addTaskButton.setOnClickListener {
             taskList += Task(id = UUID.randomUUID().toString(), title = "Task ${taskList.size + 1}", description = "Some description...")
             adapter.notifyDataSetChanged()
         }
