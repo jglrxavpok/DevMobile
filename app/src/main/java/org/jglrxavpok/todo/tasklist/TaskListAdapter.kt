@@ -13,6 +13,8 @@ import org.jglrxavpok.todo.databinding.ItemTaskBinding
 
 class TaskListAdapter(taskList: List<Task>): ListAdapter<Task, TaskListAdapter.Holder>(DiffCallback) {
 
+    var onDeleteClickListener: ((Task) -> Unit)? = null
+
     init {
         submitList(taskList)
     }
@@ -22,6 +24,10 @@ class TaskListAdapter(taskList: List<Task>): ListAdapter<Task, TaskListAdapter.H
             itemView.apply {
                 val binding = DataBindingUtil.bind<ItemTaskBinding>(this)!!
                 binding.task = task
+                binding.delete.setOnClickListener {
+                    onDeleteClickListener?.invoke(task)
+                    println(onDeleteClickListener)
+                }
             }
         }
     }

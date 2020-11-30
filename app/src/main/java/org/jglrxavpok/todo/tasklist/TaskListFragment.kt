@@ -43,6 +43,10 @@ class TaskListFragment: Fragment() {
             this.run {
                 this.setHasFixedSize(true)
                 this.adapter = TaskListAdapter(list)
+                (this.adapter as? TaskListAdapter)?.onDeleteClickListener = { task ->
+                    list -= task
+                    adapter!!.notifyDataSetChanged()
+                }
             }
         }
     }
