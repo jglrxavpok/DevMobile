@@ -36,6 +36,18 @@ class TaskListFragment: Fragment() {
         val recyclerView = binding.recyclerView
         recyclerView.layoutManager = LinearLayoutManager(activity)
 
+        val adapter = TaskListAdapter(taskList)
+        recyclerView.adapter = adapter
+        adapter.onDeleteClickListener = { task ->
+            taskList -= task
+            adapter.notifyDataSetChanged()
+        }
+        adapter.onEditClickListener = { task ->
+            val intent = Intent(activity, TaskActivity::class.java)
+            intent.putExtra("currentTask", task)
+            startActivityForResult(intent, ADD_TASK_REQUEST_CODE)
+        }
+
         binding.addTaskButton.setOnClickListener {
             val intent = Intent(activity, TaskActivity::class.java)
             startActivityForResult(intent, ADD_TASK_REQUEST_CODE)
@@ -57,28 +69,6 @@ class TaskListFragment: Fragment() {
             }
             val binding = DataBindingUtil.bind<FragmentTaskListBinding>(view!!)!!
             binding.recyclerView.adapter?.notifyDataSetChanged()
-        }
-    }
-
-    companion object {
-        @JvmStatic
-        @BindingAdapter(value = ["setList"])
-        fun RecyclerView.bindRecyclerViewAdapter(list: MutableList<Task>) {
-            this.run {
-                val activity = this.context as Activity
-                var binding = DataBindingUtil.bind<FragmentTaskListBinding>(this.parent as View)
-                this.setHasFixedSize(true)
-                this.adapter = TaskListAdapter(list)
-                (this.adapter as? TaskListAdapter)?.onDeleteClickListener = { task ->
-                    list -= task
-                    adapter!!.notifyDataSetChanged()
-                }
-                (this.adapter as? TaskListAdapter)?.onEditClickListener = { task ->
-                    val intent = Intent(activity, TaskActivity::class.java)
-                    intent.putExtra("currentTask", task)
-                    activity.startActivityForResult(intent, ADD_TASK_REQUEST_CODE)
-                }
-            }
         }
     }
 }

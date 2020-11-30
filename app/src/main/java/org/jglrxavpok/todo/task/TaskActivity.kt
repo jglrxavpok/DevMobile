@@ -19,6 +19,10 @@ class TaskActivity : AppCompatActivity() {
         binding = DataBindingUtil.setContentView(this, R.layout.task_activity)
         val isNotNew = intent.hasExtra("currentTask")
         val task = intent.getSerializableExtra("currentTask") as? Task ?: Task(id = UUID.randomUUID().toString())
+        if(isNotNew) {
+            binding.editDescription.setText(task.description)
+            binding.editTitle.setText(task.title)
+        }
         binding.validate.setOnClickListener{
             if(binding.editTitle.text.toString().isNotBlank()){
                 task.title = binding.editTitle.text.toString()
