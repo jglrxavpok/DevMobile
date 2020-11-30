@@ -1,4 +1,8 @@
 <resources>
     <string name="app_name">ToDoXavierNiochaut</string>
     <string name="delete">Delete</string>
+    <string name="check">check</string>
+    <string name="title">Title</string>
+    <string name="description">Description</string>
+    <string name="edit">edit</string>
 </resources>

@@ -14,6 +14,7 @@ import org.jglrxavpok.todo.databinding.ItemTaskBinding
 class TaskListAdapter(taskList: List<Task>): ListAdapter<Task, TaskListAdapter.Holder>(DiffCallback) {
 
     var onDeleteClickListener: ((Task) -> Unit)? = null
+    var onEditClickListener: ((Task) -> Unit)? = null
 
     init {
         submitList(taskList)
@@ -26,7 +27,9 @@ class TaskListAdapter(taskList: List<Task>): ListAdapter<Task, TaskListAdapter.H
                 binding.task = task
                 binding.delete.setOnClickListener {
                     onDeleteClickListener?.invoke(task)
-                    println(onDeleteClickListener)
+                }
+                binding.edit.setOnClickListener {
+                    onEditClickListener?.invoke(task)
                 }
             }
         }
