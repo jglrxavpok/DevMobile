@@ -11,18 +11,24 @@ import androidx.databinding.BindingAdapter
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.ListFragment
+import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.whenStarted
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.floatingactionbutton.FloatingActionButton
+import kotlinx.coroutines.launch
 import org.jglrxavpok.todo.R
 import org.jglrxavpok.todo.databinding.FragmentTaskListBinding
+import org.jglrxavpok.todo.network.Api
+import org.jglrxavpok.todo.network.TasksRepository
 import org.jglrxavpok.todo.task.TaskActivity
 import org.jglrxavpok.todo.task.TaskActivity.Companion.ADD_TASK_REQUEST_CODE
 import java.util.*
 import kotlin.collections.ArrayList
 
 class TaskListFragment: Fragment() {
-    private val taskList = (1..5).map { Task("id_$it", "Task $it", "Description of $it") }.toMutableList() as ArrayList<Task>
+    private val tasksRepo = TasksRepository()
+    private val taskList = ArrayList<Task>()
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         val rootView = inflater.inflate(R.layout.fragment_task_list, container, false)
@@ -39,8 +45,10 @@ class TaskListFragment: Fragment() {
         val adapter = TaskListAdapter(taskList)
         recyclerView.adapter = adapter
         adapter.onDeleteClickListener = { task ->
-            taskList -= task
-            adapter.notifyDataSetChanged()
+            lifecycleScope.launch {
+                tasksRepo.deleteTask(task)
+                tasksRepo.refresh()
+            }
         }
         adapter.onEditClickListener = { task ->
             val intent = Intent(activity, TaskActivity::class.java)
@@ -52,6 +60,25 @@ class TaskListFragment: Fragment() {
             val intent = Intent(activity, TaskActivity::class.java)
             startActivityForResult(intent, ADD_TASK_REQUEST_CODE)
         }
+
+        tasksRepo.taskList.observe(viewLifecycleOwner) {
+            taskList.clear()
+            taskList += it
+            adapter.notifyDataSetChanged()
+        }
+    }
+
+    override fun onResume() {
+        super.onResume()
+        lifecycleScope.launch {
+            val userInfo = Api.userService.getInfo().body()!!
+            val binding = DataBindingUtil.bind<FragmentTaskListBinding>(view!!)!!
+            binding.name.text = "${userInfo.firstName} ${userInfo.lastName}"
+        }
+
+        lifecycleScope.launch {
+            tasksRepo.refresh()
+        }
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
@@ -59,16 +86,21 @@ class TaskListFragment: Fragment() {
         if(requestCode == ADD_TASK_REQUEST_CODE && resultCode == Activity.RESULT_OK){
             val task = data!!.getSerializableExtra("newTask") as Task
             if(data.getBooleanExtra("isNotNew", false)) {
-                taskList.first{ it.id == task.id}.apply {
+                val editedTask = taskList.first{ it.id == task.id}.apply {
                     title = if(task.title.isNotBlank()) task.title else title
                     description = if(task.description.isNotBlank()) task.description else description
                 }
+                lifecycleScope.launch {
+                    tasksRepo.updateTask(editedTask)
+                    tasksRepo.refresh()
+                }
             }
             else {
-                taskList += task
+                lifecycleScope.launch {
+                    tasksRepo.addTask(task)
+                    tasksRepo.refresh()
+                }
             }
-            val binding = DataBindingUtil.bind<FragmentTaskListBinding>(view!!)!!
-            binding.recyclerView.adapter?.notifyDataSetChanged()
         }
     }
 }

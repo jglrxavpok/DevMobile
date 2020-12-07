@@ -1,4 +1,14 @@
 package org.jglrxavpok.todo.tasklist
-import java.io.Serializable
+import kotlinx.serialization.SerialName
+import kotlinx.serialization.Serializable
 
-data class Task(val id: String, var title: String = "New Task !", var description: String = "New Task Description !") : Serializable
+@Serializable
+data class Task(
+    @SerialName("id")
+    val id: String,
+
+    @SerialName("title")
+    var title: String = "New Task !",
+
+    @SerialName("description")
+    var description: String = "New Task Description !"): java.io.Serializable
