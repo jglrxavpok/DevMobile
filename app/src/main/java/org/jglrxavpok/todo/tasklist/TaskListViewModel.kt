@@ -37,7 +37,7 @@ class TaskListViewModel: ViewModel() {
         viewModelScope.launch {
             repository.updateTask(task)
             modifiableTaskList.value?.let {
-                val editedTask = taskList.first{ it.id == task.id}.apply {
+                it.first{ it.id == task.id}.apply {
                     title = if(task.title.isNotBlank()) task.title else title
                     description = if(task.description.isNotBlank()) task.description else description
                 }

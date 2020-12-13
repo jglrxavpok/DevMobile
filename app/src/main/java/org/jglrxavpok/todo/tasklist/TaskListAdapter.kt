@@ -10,8 +10,14 @@ import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import org.jglrxavpok.todo.R
 import org.jglrxavpok.todo.databinding.ItemTaskBinding
+import kotlin.properties.Delegates
 
-class TaskListAdapter(var taskList: List<Task> = emptyList()): ListAdapter<Task, TaskListAdapter.Holder>(DiffCallback) {
+class TaskListAdapter(): ListAdapter<Task, TaskListAdapter.Holder>(DiffCallback) {
+
+    var taskList: List<Task> by Delegates.observable(emptyList()) { _, _, _ ->
+        submitList(taskList)
+        notifyDataSetChanged()
+    }
 
     var onDeleteClickListener: ((Task) -> Unit)? = null
     var onEditClickListener: ((Task) -> Unit)? = null
