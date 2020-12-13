@@ -7,15 +7,10 @@ import org.jglrxavpok.todo.tasklist.Task
 class TasksRepository {
     private val tasksWebService get()= Api.taskService
 
-    private val modifiableTaskList = MutableLiveData<List<Task>>()
-
-    val taskList: LiveData<List<Task>> = modifiableTaskList
-
-    suspend fun refresh() {
+    suspend fun refresh(): List<Task>? {
         val freshData = tasksWebService.getTasks()
-        if(freshData.isSuccessful) {
-            modifiableTaskList.value = freshData.body()!!
-        }
+        return if(freshData.isSuccessful) freshData.body() else null
+
     }
 
     suspend fun updateTask(task: Task) {

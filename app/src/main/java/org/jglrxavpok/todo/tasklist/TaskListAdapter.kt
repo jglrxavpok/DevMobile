@@ -11,7 +11,7 @@ import androidx.recyclerview.widget.RecyclerView
 import org.jglrxavpok.todo.R
 import org.jglrxavpok.todo.databinding.ItemTaskBinding
 
-class TaskListAdapter(taskList: List<Task>): ListAdapter<Task, TaskListAdapter.Holder>(DiffCallback) {
+class TaskListAdapter(var taskList: List<Task> = emptyList()): ListAdapter<Task, TaskListAdapter.Holder>(DiffCallback) {
 
     var onDeleteClickListener: ((Task) -> Unit)? = null
     var onEditClickListener: ((Task) -> Unit)? = null
