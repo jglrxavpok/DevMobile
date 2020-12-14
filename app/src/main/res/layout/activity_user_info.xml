@@ -24,5 +24,35 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="@string/take_picture" />
+
+        <EditText
+            android:id="@+id/first_name"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:ems="10"
+            android:inputType="textPersonName"
+            android:text="First Name" />
+
+        <EditText
+            android:id="@+id/family_name"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:ems="10"
+            android:inputType="textPersonName"
+            android:text="Family Name" />
+
+        <EditText
+            android:id="@+id/email"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:ems="10"
+            android:inputType="textEmailAddress" />
+
+        <ImageButton
+            android:id="@+id/edit_user_info"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:srcCompat="@android:drawable/ic_menu_save" />
+
     </LinearLayout>
 </layout>
