@@ -6,26 +6,19 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.core.app.ActivityCompat.startActivityForResult
-import androidx.databinding.BindingAdapter
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
-import androidx.fragment.app.ListFragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
-import androidx.lifecycle.whenStarted
 import androidx.recyclerview.widget.LinearLayoutManager
-import androidx.recyclerview.widget.RecyclerView
-import com.google.android.material.floatingactionbutton.FloatingActionButton
+import coil.load
 import kotlinx.coroutines.launch
 import org.jglrxavpok.todo.R
 import org.jglrxavpok.todo.databinding.FragmentTaskListBinding
 import org.jglrxavpok.todo.network.Api
-import org.jglrxavpok.todo.network.TasksRepository
 import org.jglrxavpok.todo.task.TaskActivity
 import org.jglrxavpok.todo.task.TaskActivity.Companion.ADD_TASK_REQUEST_CODE
-import java.util.*
-import kotlin.collections.ArrayList
+import org.jglrxavpok.todo.userinfo.UserInfoActivity
 
 class TaskListFragment: Fragment() {
     private val adapter = TaskListAdapter()
@@ -57,6 +50,11 @@ class TaskListFragment: Fragment() {
             startActivityForResult(intent, ADD_TASK_REQUEST_CODE)
         }
 
+        binding.avatar.setOnClickListener {
+            val intent = Intent(activity, UserInfoActivity::class.java)
+            startActivity(intent)
+        }
+
         viewModel.taskList.observe(viewLifecycleOwner) { newList ->
             adapter.taskList = newList.orEmpty()
         }
@@ -64,10 +62,15 @@ class TaskListFragment: Fragment() {
 
     override fun onResume() {
         super.onResume()
+        val binding = DataBindingUtil.bind<FragmentTaskListBinding>(view!!)!!
+        binding.avatar.load("https://goo.gl/gEgYUd")
         lifecycleScope.launch {
-            val userInfo = Api.userService.getInfo().body()!!
+            val userInfo = Api.userWebService.getInfo().body()!!
             val binding = DataBindingUtil.bind<FragmentTaskListBinding>(view!!)!!
             binding.name.text = "${userInfo.firstName} ${userInfo.lastName}"
+            userInfo.avatarURL?.let {
+                binding.avatar.load(it)
+            }
         }
         viewModel.loadTasks()
     }

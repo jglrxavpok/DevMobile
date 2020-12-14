@@ -1,8 +1,10 @@
 <resources>
-    <string name="app_name">ToDoXavierNiochaut</string>
+    <string name="app_name">ToDoXavierGwendoline</string>
     <string name="delete">Delete</string>
     <string name="check">check</string>
     <string name="title">Title</string>
     <string name="description">Description</string>
     <string name="edit">edit</string>
+    <string name="choose_picture">Choisir une Image</string>
+    <string name="take_picture">Prendre une photo</string>
 </resources>
