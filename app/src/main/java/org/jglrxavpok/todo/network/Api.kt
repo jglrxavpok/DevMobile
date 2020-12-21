@@ -1,16 +1,23 @@
 package org.jglrxavpok.todo.network
 
+import android.content.Context
+import androidx.preference.PreferenceManager
 import com.jakewharton.retrofit2.converter.kotlinx.serialization.asConverterFactory
 import kotlinx.serialization.json.Json
 import okhttp3.MediaType.Companion.toMediaType
 import okhttp3.OkHttpClient
+import org.jglrxavpok.todo.SHARED_PREF_TOKEN_KEY
 import retrofit2.Retrofit
 
-object Api {
+class Api(private val context: Context) {
 
-    // constantes qui serviront à faire les requêtes
-    private const val BASE_URL = "https://android-tasks-api.herokuapp.com/api/"
-    private const val TOKEN = "eyJhbGciOiJIUzI1NiJ9.eyJ1c2VyX2lkIjoyNzQsImV4cCI6MTYzODg4NDgyMX0.M2sTlAgodqygjN--kP-_ZSv-eguV1dYyRCTV-kk5y84"
+    companion object {
+        // constantes qui serviront à faire les requêtes
+        private const val BASE_URL = "https://android-tasks-api.herokuapp.com/api/"
+        lateinit var Instance: Api
+    }
+
+    private val TOKEN get()= PreferenceManager.getDefaultSharedPreferences(context).getString(SHARED_PREF_TOKEN_KEY, "")//"eyJhbGciOiJIUzI1NiJ9.eyJ1c2VyX2lkIjozNTMsImV4cCI6MTY0MDEwMzYwNX0.fRvOw0MIFpIoHXxGFrAN9vLDm2RHC6YRplonAwoxl6Y"
 
     // on construit une instance de parseur de JSON:
     private val jsonSerializer = Json {

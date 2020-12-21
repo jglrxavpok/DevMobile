@@ -1,6 +1,8 @@
 package org.jglrxavpok.todo.network
 
 import okhttp3.MultipartBody
+import org.jglrxavpok.todo.auth.LoginForm
+import org.jglrxavpok.todo.auth.LoginResponse
 import retrofit2.Response
 import retrofit2.http.*
 
@@ -15,4 +17,6 @@ interface UserWebService {
     @PATCH("users")
     suspend fun updateUserInfo(@Body userInfo: UserInfo): Response<UserInfo>
 
+    @POST("users/login")
+    suspend fun login(@Body user: LoginForm): Response<LoginResponse>
 }

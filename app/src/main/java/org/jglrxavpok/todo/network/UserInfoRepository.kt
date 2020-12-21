@@ -9,7 +9,7 @@ import okhttp3.RequestBody.Companion.toRequestBody
 import org.jglrxavpok.todo.tasklist.Task
 
 class UserInfoRepository {
-    private val userInfoWebService get()= Api.userWebService
+    private val userInfoWebService get()= Api.Instance.userWebService
 
     suspend fun getUserInfo() : UserInfo {
         return userInfoWebService.getInfo().body()!!

@@ -5,7 +5,7 @@ import androidx.lifecycle.MutableLiveData
 import org.jglrxavpok.todo.tasklist.Task
 
 class TasksRepository {
-    private val tasksWebService get()= Api.taskService
+    private val tasksWebService get()= Api.Instance.taskService
 
     suspend fun refresh(): List<Task>? {
         val freshData = tasksWebService.getTasks()

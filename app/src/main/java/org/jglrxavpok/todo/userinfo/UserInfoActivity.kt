@@ -128,8 +128,11 @@ class UserInfoActivity : AppCompatActivity() {
         }
         binding.editUserInfo.setOnClickListener {
             val user = UserInfo (binding.email.text.toString(), binding.firstName.text.toString(), binding.familyName.text.toString(), viewModel.userInfo.value?.avatarURL)
+            viewModel.userInfo.observe(this) {
+                finish()
+            }
             viewModel.editUserInfo(user)
-            finish()
+
         }
     }
 
