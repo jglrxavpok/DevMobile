@@ -19,10 +19,12 @@ import org.jglrxavpok.todo.network.Api
 import org.jglrxavpok.todo.task.TaskActivity
 import org.jglrxavpok.todo.task.TaskActivity.Companion.ADD_TASK_REQUEST_CODE
 import org.jglrxavpok.todo.userinfo.UserInfoActivity
+import org.jglrxavpok.todo.userinfo.UserInfoViewModel
 
 class TaskListFragment: Fragment() {
     private val adapter = TaskListAdapter()
     private val viewModel by viewModels<TaskListViewModel>()
+    private val userViewModel by viewModels<UserInfoViewModel>()
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         val rootView = inflater.inflate(R.layout.fragment_task_list, container, false)
@@ -64,14 +66,15 @@ class TaskListFragment: Fragment() {
         super.onResume()
         val binding = DataBindingUtil.bind<FragmentTaskListBinding>(view!!)!!
         binding.avatar.load("https://goo.gl/gEgYUd")
-        lifecycleScope.launch {
-            val userInfo = Api.userWebService.getInfo().body()!!
+
+        userViewModel.userInfo.observe(this) { userInfo ->
             val binding = DataBindingUtil.bind<FragmentTaskListBinding>(view!!)!!
             binding.name.text = "${userInfo.firstName} ${userInfo.lastName}"
             userInfo.avatarURL?.let {
                 binding.avatar.load(it)
             }
         }
+        userViewModel.refreshUserInfo()
         viewModel.loadTasks()
     }
 

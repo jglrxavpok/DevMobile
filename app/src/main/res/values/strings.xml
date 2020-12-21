@@ -7,4 +7,5 @@
     <string name="edit">edit</string>
     <string name="choose_picture">Choisir une Image</string>
     <string name="take_picture">Prendre une photo</string>
+    <string name="uploading">Upload en cours...</string>
 </resources>

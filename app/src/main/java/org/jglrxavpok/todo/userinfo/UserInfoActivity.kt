@@ -10,6 +10,7 @@ import android.os.Build
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.provider.MediaStore.Files.getContentUri
+import android.view.View
 import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.viewModels
@@ -19,7 +20,9 @@ import androidx.core.content.FileProvider
 import androidx.core.net.toFile
 import androidx.core.net.toUri
 import androidx.databinding.DataBindingUtil
+import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.lifecycleScope
+import coil.load
 import kotlinx.coroutines.launch
 import okhttp3.MultipartBody
 import okhttp3.RequestBody.Companion.asRequestBody
@@ -36,12 +39,14 @@ class UserInfoActivity : AppCompatActivity() {
     private lateinit var binding: ActivityUserInfoBinding
     private val viewModel : UserInfoViewModel by viewModels()
 
+    @RequiresApi(Build.VERSION_CODES.Q)
     private val requestPermissionLauncher =
         registerForActivityResult(ActivityResultContracts.RequestPermission()) { isGranted: Boolean ->
             if (isGranted) openCamera()
             else showExplanationDialog()
         }
 
+    @RequiresApi(Build.VERSION_CODES.Q)
     private fun requestCameraPermission() =
         requestPermissionLauncher.launch(Manifest.permission.CAMERA)
 
@@ -55,6 +60,7 @@ class UserInfoActivity : AppCompatActivity() {
         }
     }
 
+    @RequiresApi(Build.VERSION_CODES.Q)
     private fun showExplanationDialog() {
         AlertDialog.Builder(this).apply {
             setMessage("On a besoin de la caméra sivouplé ! 🥺")
@@ -68,9 +74,9 @@ class UserInfoActivity : AppCompatActivity() {
 
     private val photoUri by lazy {
         FileProvider.getUriForFile(
-            this,
-            "org.jglrxavpok.todo.fileProvider",
-            File.createTempFile("avatar", "jpeg")
+                this,
+                BuildConfig.APPLICATION_ID +".fileprovider",
+                File.createTempFile("avatar", ".jpeg", externalCacheDir)
         )
     }
 
@@ -94,22 +100,9 @@ class UserInfoActivity : AppCompatActivity() {
     @RequiresApi(Build.VERSION_CODES.Q)
     private fun openCamera() = takePicture.launch(photoUri)
 
-    // convert file to HTTP body
-    @RequiresApi(Build.VERSION_CODES.Q)
-    private fun convertFileForHTTP(uri: Uri) = MultipartBody.Part.createFormData(
-        name = "avatar",
-        filename = "temp.jpeg",
-        body = contentResolver.openInputStream(uri)!!.readBytes().toRequestBody()
-    )
-
     @RequiresApi(Build.VERSION_CODES.Q)
     private fun uploadNewAvatar(image: Uri) {
-        lifecycleScope.launch {
-            binding.imageView.setImageURI(image)
-            val part = convertFileForHTTP(image)
-            Api.userWebService.updateAvatar(part)
-            println("upload")
-        }
+        viewModel.updateAvatar(contentResolver, image)
     }
 
     @RequiresApi(Build.VERSION_CODES.Q)
@@ -127,11 +120,15 @@ class UserInfoActivity : AppCompatActivity() {
             binding.firstName.setText(it.firstName)
             binding.familyName.setText(it.lastName)
             binding.email.setText(it.email)
+            binding.imageView.load(it.avatarURL)
+        }
+        viewModel.uploadingState.observe(this) { isUploading ->
+            // display progress icon when uploading
+            binding.avatarUploadProgress.visibility = if(isUploading) View.VISIBLE else View.INVISIBLE
         }
         binding.editUserInfo.setOnClickListener {
             val user = UserInfo (binding.email.text.toString(), binding.firstName.text.toString(), binding.familyName.text.toString(), viewModel.userInfo.value?.avatarURL)
             viewModel.editUserInfo(user)
-            viewModel.refreshUserInfo()
             finish()
         }
     }
