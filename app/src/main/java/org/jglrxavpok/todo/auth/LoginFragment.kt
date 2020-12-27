@@ -10,6 +10,7 @@ import android.widget.Toast
 import androidx.core.content.edit
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.preference.PreferenceManager
 import kotlinx.coroutines.launch
@@ -18,8 +19,11 @@ import org.jglrxavpok.todo.R
 import org.jglrxavpok.todo.SHARED_PREF_TOKEN_KEY
 import org.jglrxavpok.todo.databinding.FragmentLoginBinding
 import org.jglrxavpok.todo.network.Api
+import org.jglrxavpok.todo.userinfo.UserInfoViewModel
 
 class LoginFragment: Fragment() {
+
+    val userViewModel: UserInfoViewModel by activityViewModels()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)

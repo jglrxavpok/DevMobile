@@ -1,16 +1,19 @@
 package org.jglrxavpok.todo.userinfo
 
 import android.content.ContentResolver
+import android.content.Context
 import android.net.Uri
 import android.os.Build
 import androidx.annotation.RequiresApi
+import androidx.core.content.edit
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import androidx.preference.PreferenceManager
 import kotlinx.coroutines.launch
-import okhttp3.MultipartBody
-import okhttp3.RequestBody.Companion.toRequestBody
+import org.jglrxavpok.todo.SHARED_PREF_TOKEN_KEY
+import org.jglrxavpok.todo.network.Api
 import org.jglrxavpok.todo.network.UserInfo
 import org.jglrxavpok.todo.network.UserInfoRepository
 
@@ -21,9 +24,18 @@ class UserInfoViewModel : ViewModel() {
     val userInfo: LiveData<UserInfo> = _userInfo
     val uploadingState: LiveData<Boolean> = _uploadingState
 
+    fun isLoggedIn() = Api.Instance.hasToken()
+
     fun refreshUserInfo() {
         viewModelScope.launch {
             _userInfo.value = repository.getUserInfo()
+        }
+    }
+
+    fun disconnect(context: Context?) {
+        _userInfo.value = null
+        PreferenceManager.getDefaultSharedPreferences(context).edit() {
+            putString(SHARED_PREF_TOKEN_KEY, "")
         }
     }
 

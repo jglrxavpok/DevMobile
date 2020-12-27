@@ -10,7 +10,6 @@ import org.jglrxavpok.todo.SHARED_PREF_TOKEN_KEY
 import retrofit2.Retrofit
 
 class Api(private val context: Context) {
-
     companion object {
         // constantes qui serviront à faire les requêtes
         private const val BASE_URL = "https://android-tasks-api.herokuapp.com/api/"
@@ -56,4 +55,6 @@ class Api(private val context: Context) {
     val taskService: TasksWebService by lazy {
         retrofit.create(TasksWebService::class.java)
     }
+
+    fun hasToken() = TOKEN?.isNotBlank() ?: false
 }

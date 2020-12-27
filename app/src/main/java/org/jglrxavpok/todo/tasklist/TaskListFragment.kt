@@ -9,13 +9,11 @@ import android.view.ViewGroup
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
-import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import coil.load
-import kotlinx.coroutines.launch
 import org.jglrxavpok.todo.R
+import org.jglrxavpok.todo.auth.AuthenticationActivity
 import org.jglrxavpok.todo.databinding.FragmentTaskListBinding
-import org.jglrxavpok.todo.network.Api
 import org.jglrxavpok.todo.task.TaskActivity
 import org.jglrxavpok.todo.task.TaskActivity.Companion.ADD_TASK_REQUEST_CODE
 import org.jglrxavpok.todo.userinfo.UserInfoActivity
@@ -38,6 +36,12 @@ class TaskListFragment: Fragment() {
         recyclerView.layoutManager = LinearLayoutManager(activity)
 
         recyclerView.adapter = adapter
+
+        if(!userViewModel.isLoggedIn()) {
+            onDisconnect()
+            return
+        }
+
         adapter.onDeleteClickListener = { task ->
             viewModel.deleteTask(task)
         }
@@ -57,9 +61,22 @@ class TaskListFragment: Fragment() {
             startActivity(intent)
         }
 
+        binding.disconnectButton.setOnClickListener {
+            userViewModel.disconnect(context)
+            onDisconnect()
+        }
+
         viewModel.taskList.observe(viewLifecycleOwner) { newList ->
             adapter.taskList = newList.orEmpty()
         }
+    }
+
+    /**
+     * Called when the user is disconnected (even when entering this fragment with no user info)
+     */
+    private fun onDisconnect() {
+        val intent = Intent(activity, AuthenticationActivity::class.java)
+        startActivity(intent)
     }
 
     override fun onResume() {
@@ -68,10 +85,14 @@ class TaskListFragment: Fragment() {
         binding.avatar.load("https://goo.gl/gEgYUd")
 
         userViewModel.userInfo.observe(this) { userInfo ->
-            val binding = DataBindingUtil.bind<FragmentTaskListBinding>(view!!)!!
-            binding.name.text = "${userInfo.firstName} ${userInfo.lastName}"
-            userInfo.avatarURL?.let {
-                binding.avatar.load(it)
+            if(userInfo == null) {
+                onDisconnect()
+            } else {
+                val binding = DataBindingUtil.bind<FragmentTaskListBinding>(view!!)!!
+                binding.name.text = "${userInfo.firstName} ${userInfo.lastName}"
+                userInfo.avatarURL?.let {
+                    binding.avatar.load(it)
+                }
             }
         }
         userViewModel.refreshUserInfo()

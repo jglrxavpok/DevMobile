@@ -13,6 +13,9 @@
         <action
             android:id="@+id/action_authenticationFragment_to_signupFragment"
             app:destination="@id/signupFragment" />
+        <action
+            android:id="@+id/action_authenticationFragment_to_taskListFragment"
+            app:destination="@id/taskListFragment" />
     </fragment>
     <fragment
         android:id="@+id/loginFragment"
@@ -22,4 +25,8 @@
         android:id="@+id/signupFragment"
         android:name="org.jglrxavpok.todo.auth.SignupFragment"
         android:label="SignupFragment" />
+    <fragment
+        android:id="@+id/taskListFragment"
+        android:name="org.jglrxavpok.todo.tasklist.TaskListFragment"
+        android:label="TaskListFragment" />
 </navigation>
