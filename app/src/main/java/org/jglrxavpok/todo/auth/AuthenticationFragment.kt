@@ -21,7 +21,6 @@ class AuthenticationFragment : Fragment() {
         val binding = DataBindingUtil.bind<FragmentAuthenticationBinding>(view)!!
         if(userViewModel.isLoggedIn()) {
             findNavController().navigate(R.id.action_authenticationFragment_to_taskListFragment)
-            return
         }
         binding.loginButton.setOnClickListener {
             findNavController().navigate(R.id.action_authenticationFragment_to_loginFragment)
