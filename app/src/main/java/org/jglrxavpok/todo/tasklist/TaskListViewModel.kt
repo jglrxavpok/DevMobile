@@ -9,9 +9,9 @@ import org.jglrxavpok.todo.network.TasksRepository
 import org.koin.core.component.KoinComponent
 import org.koin.core.component.inject
 
-class TaskListViewModel: ViewModel(), KoinComponent {
+class TaskListViewModel : ViewModel(), KoinComponent {
     private val modifiableTaskList = MutableLiveData<List<Task>>()
-
+    private val addTask = AddTask()
     val taskList: LiveData<List<Task>> = modifiableTaskList
     private val repository by inject<TasksRepository>()
 
@@ -30,8 +30,7 @@ class TaskListViewModel: ViewModel(), KoinComponent {
 
     fun addTask(task: Task) {
         viewModelScope.launch {
-            repository.addTask(task)
-            modifiableTaskList.value = modifiableTaskList.value?.plus(task)
+            modifiableTaskList.value = addTask.execute(modifiableTaskList.value, repository, task)
         }
     }
 
