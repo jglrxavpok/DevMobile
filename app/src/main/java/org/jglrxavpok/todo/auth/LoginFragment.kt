@@ -19,11 +19,16 @@ import org.jglrxavpok.todo.R
 import org.jglrxavpok.todo.SHARED_PREF_TOKEN_KEY
 import org.jglrxavpok.todo.databinding.FragmentLoginBinding
 import org.jglrxavpok.todo.network.Api
+import org.jglrxavpok.todo.network.UserWebService
 import org.jglrxavpok.todo.userinfo.UserInfoViewModel
+import org.koin.core.component.KoinComponent
+import org.koin.core.component.inject
 
-class LoginFragment: Fragment() {
+class LoginFragment: Fragment(), KoinComponent {
 
     val userViewModel: UserInfoViewModel by activityViewModels()
+
+    private val userInfoWebService by inject<UserWebService>()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -53,7 +58,7 @@ class LoginFragment: Fragment() {
 
             // TODO: view model?
             lifecycleScope.launch {
-                val answer = Api.Instance.userWebService.login(loginForm).body()
+                val answer = userInfoWebService.login(loginForm).body()
                 if(answer != null) {
                     PreferenceManager.getDefaultSharedPreferences(context).edit {
                         putString(SHARED_PREF_TOKEN_KEY, answer.token)

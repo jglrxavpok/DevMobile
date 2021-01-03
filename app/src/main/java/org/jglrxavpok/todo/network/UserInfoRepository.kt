@@ -7,9 +7,11 @@ import androidx.annotation.RequiresApi
 import okhttp3.MultipartBody
 import okhttp3.RequestBody.Companion.toRequestBody
 import org.jglrxavpok.todo.tasklist.Task
+import org.koin.core.component.KoinComponent
+import org.koin.core.component.inject
 
-class UserInfoRepository {
-    private val userInfoWebService get()= Api.Instance.userWebService
+class UserInfoRepository : KoinComponent {
+    private val userInfoWebService by inject<UserWebService>()
 
     suspend fun getUserInfo() : UserInfo {
         return userInfoWebService.getInfo().body()!!

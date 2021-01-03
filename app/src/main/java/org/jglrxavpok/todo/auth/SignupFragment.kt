@@ -18,8 +18,13 @@ import org.jglrxavpok.todo.SHARED_PREF_TOKEN_KEY
 import org.jglrxavpok.todo.databinding.FragmentLoginBinding
 import org.jglrxavpok.todo.databinding.FragmentSignupBinding
 import org.jglrxavpok.todo.network.Api
+import org.jglrxavpok.todo.network.UserWebService
+import org.koin.core.component.KoinComponent
+import org.koin.core.component.inject
 
-class SignupFragment: Fragment() {
+class SignupFragment: Fragment(), KoinComponent {
+
+    private val userInfoWebService by inject<UserWebService>()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -63,7 +68,7 @@ class SignupFragment: Fragment() {
 
             // TODO: view model?
             lifecycleScope.launch {
-                val answer = Api.Instance.userWebService.signup(signupForm)
+                val answer = userInfoWebService.signup(signupForm)
                 val body = answer.body()
                 if(body != null) {
                     PreferenceManager.getDefaultSharedPreferences(context).edit {

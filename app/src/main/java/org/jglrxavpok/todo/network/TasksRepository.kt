@@ -1,11 +1,11 @@
 package org.jglrxavpok.todo.network
 
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
 import org.jglrxavpok.todo.tasklist.Task
+import org.koin.core.component.KoinComponent
+import org.koin.core.component.inject
 
-class TasksRepository {
-    private val tasksWebService get()= Api.Instance.taskService
+class TasksRepository : KoinComponent{
+    private val tasksWebService by inject<TasksWebService>()
 
     suspend fun refresh(): List<Task>? {
         val freshData = tasksWebService.getTasks()

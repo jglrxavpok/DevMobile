@@ -1,4 +1,15 @@
 package org.jglrxavpok.todo
 
-class ToDoModule {
+import org.jglrxavpok.todo.network.*
+import org.koin.dsl.module
+
+// Koin module
+val toDoModule = module {
+    single { TasksRepository() }
+
+    single { UserInfoRepository() }
+
+    single<TasksWebService> { Api.Instance.retrofit.create(TasksWebService::class.java) }
+
+    single<UserWebService> { Api.Instance.retrofit.create(UserWebService::class.java) }
 }

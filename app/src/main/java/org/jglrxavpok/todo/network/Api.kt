@@ -42,19 +42,11 @@ class Api(private val context: Context) {
     }
 
     // permettra d'implémenter les services que nous allons créer:
-    private val retrofit = Retrofit.Builder()
+    val retrofit = Retrofit.Builder()
         .baseUrl(BASE_URL)
         .client(okHttpClient)
         .addConverterFactory(converterFactory)
         .build()
-
-    val userWebService: UserWebService by lazy {
-        retrofit.create(UserWebService::class.java)
-    }
-
-    val taskService: TasksWebService by lazy {
-        retrofit.create(TasksWebService::class.java)
-    }
 
     fun hasToken() = TOKEN?.isNotBlank() ?: false
 }
