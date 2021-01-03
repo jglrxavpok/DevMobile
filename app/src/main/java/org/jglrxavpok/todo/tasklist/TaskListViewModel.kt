@@ -6,12 +6,14 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.launch
 import org.jglrxavpok.todo.network.TasksRepository
+import org.koin.core.component.KoinComponent
+import org.koin.core.component.inject
 
-class TaskListViewModel: ViewModel() {
+class TaskListViewModel: ViewModel(), KoinComponent {
     private val modifiableTaskList = MutableLiveData<List<Task>>()
 
     val taskList: LiveData<List<Task>> = modifiableTaskList
-    private val repository = TasksRepository()
+    private val repository by inject<TasksRepository>()
 
     fun loadTasks() {
         viewModelScope.launch {

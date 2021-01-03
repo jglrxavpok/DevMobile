@@ -5,9 +5,9 @@ import org.koin.dsl.module
 
 // Koin module
 val toDoModule = module {
-    single { TasksRepository() }
+    single<TasksRepository> { TasksRepositoryImpl() }
 
-    single { UserInfoRepository() }
+    single<UserInfoRepository> { UserInfoRepositoryImpl() }
 
     single<TasksWebService> { Api.Instance.retrofit.create(TasksWebService::class.java) }
 

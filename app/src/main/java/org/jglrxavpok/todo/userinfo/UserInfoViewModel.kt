@@ -16,9 +16,11 @@ import org.jglrxavpok.todo.SHARED_PREF_TOKEN_KEY
 import org.jglrxavpok.todo.network.Api
 import org.jglrxavpok.todo.network.UserInfo
 import org.jglrxavpok.todo.network.UserInfoRepository
+import org.koin.core.component.KoinComponent
+import org.koin.core.component.inject
 
-class UserInfoViewModel : ViewModel() {
-    private val repository = UserInfoRepository()
+class UserInfoViewModel : ViewModel(), KoinComponent {
+    private val repository by inject<UserInfoRepository>()
     private val _userInfo = MutableLiveData<UserInfo>()
     private val _uploadingState = MutableLiveData(false)
     val userInfo: LiveData<UserInfo> = _userInfo

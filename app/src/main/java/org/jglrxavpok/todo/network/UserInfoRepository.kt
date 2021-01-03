@@ -10,14 +10,21 @@ import org.jglrxavpok.todo.tasklist.Task
 import org.koin.core.component.KoinComponent
 import org.koin.core.component.inject
 
-class UserInfoRepository : KoinComponent {
+interface UserInfoRepository {
+    @RequiresApi(Build.VERSION_CODES.Q)
+    suspend fun updateAvatar(contentResolver: ContentResolver, uri: Uri)
+    suspend fun updateUserInfo(userInfo : UserInfo)
+    suspend fun getUserInfo() : UserInfo
+}
+
+class UserInfoRepositoryImpl : UserInfoRepository, KoinComponent {
     private val userInfoWebService by inject<UserWebService>()
 
-    suspend fun getUserInfo() : UserInfo {
+    override suspend fun getUserInfo() : UserInfo {
         return userInfoWebService.getInfo().body()!!
     }
 
-    suspend fun updateUserInfo(userInfo : UserInfo) {
+    override suspend fun updateUserInfo(userInfo : UserInfo) {
         userInfoWebService.updateUserInfo(userInfo)
     }
 
@@ -30,7 +37,7 @@ class UserInfoRepository : KoinComponent {
     )
 
     @RequiresApi(Build.VERSION_CODES.Q)
-    suspend fun updateAvatar(contentResolver: ContentResolver, uri: Uri) {
+    override suspend fun updateAvatar(contentResolver: ContentResolver, uri: Uri) {
         userInfoWebService.updateAvatar(convertFileForHTTP(contentResolver, uri))
     }
 }
